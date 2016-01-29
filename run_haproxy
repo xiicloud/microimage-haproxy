@@ -1,0 +1,5 @@
+#!/usr/bin/execlineb -P
+
+# Start the Haproxy service using the generated config
+# echo "[haproxy] starting haproxy service..."
+exec /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg

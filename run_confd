@@ -1,0 +1,9 @@
+#!/bin/bash
+
+HOST_IP=$(getenv HOST_IP)
+ETCD=$HOST_IP:2379
+CONFD=/bin/confd
+TOML=/etc/confd/conf.d/haproxy.toml
+
+echo "confd is now monitoring etcd for changes..."
+exec ${CONFD} -watch -node ${ETCD} -config-file ${TOML}

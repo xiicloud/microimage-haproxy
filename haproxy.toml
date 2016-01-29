@@ -1,0 +1,9 @@
+[template]
+prefix      = "/lb"
+keys        = ["/backends"]
+owner       = "root"
+mode        = "0644"
+src         = "haproxy.tmpl"
+dest        = "/etc/haproxy/haproxy.cfg"
+check_cmd   = "/usr/sbin/haproxy -c -f {{ .src }}"
+reload_cmd  = "/reload.sh /etc/haproxy/haproxy.cfg"
