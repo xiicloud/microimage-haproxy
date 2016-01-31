@@ -1,4 +1,6 @@
 global
+    daemon
+    pidfile /var/run/haproxy.pid
     maxconn 20000
     pidfile /var/run/haproxy.pid
     user root
@@ -9,7 +11,7 @@ defaults
     mode http
 
     http-check disable-on-404
-    option httpchk /index.html
+    option httpchk GET /index.html
 
     # Setting options
     option redispatch

@@ -5,7 +5,7 @@ set -e
 export CON_NAME=haproxy_t
 export REG_URL=d.nicescale.com:5000
 export IMAGE=haproxy
-export TAGS="1.5"
+export TAGS="1.6"
 export BASE_IMAGE=microimages/alpine
 
 docker pull $BASE_IMAGE

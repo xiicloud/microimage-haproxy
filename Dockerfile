@@ -2,7 +2,7 @@ from microimages/alpine
 
 run wget https://github.com/kelseyhightower/confd/releases/download/v0.10.0/confd-0.10.0-linux-amd64 -O /bin/confd \
   && chmod 755 /bin/confd \
-  && apk-install haproxy
+  && apk-install haproxy iptables
 
 add haproxy.toml /etc/confd/conf.d/haproxy.toml
 add haproxy.tmpl /etc/confd/templates/

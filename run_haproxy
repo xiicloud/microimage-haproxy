@@ -1,5 +1,6 @@
-#!/usr/bin/execlineb -P
+#!/bin/bash
 
 # Start the Haproxy service using the generated config
 # echo "[haproxy] starting haproxy service..."
-/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid
+/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg
+exec sleep 1000000000
