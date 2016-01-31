@@ -8,6 +8,9 @@ global
 defaults
     mode http
 
+    http-check disable-on-404
+    option httpchk /index.html
+
     # Setting options
     option redispatch
     option tcp-smart-accept
