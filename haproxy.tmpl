@@ -6,11 +6,17 @@ global
     group root
     stats socket /var/run/haproxy.stat level admin
 
+{{ $passwd := "ADMIN_PASSWORD" }}
+
 defaults
     mode http
 
+    stats uri /stats
+    stats realm   Haproxy\ Statistics
+    stats auth    admin:{{ $passwd }}
+
     http-check disable-on-404
-    option httpchk GET /index.html
+    option httpchk GET /
 
     # Setting options
     option redispatch
