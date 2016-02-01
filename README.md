@@ -13,12 +13,17 @@ $ docker run --name myhaproxy -d -e PUBLIC_DOMAIN=hello.csphere.cn \
 ```
 
 `PUBLIC_DOMAIN`: 应用的外部域名
+
 `APP`: csphere下应用名称
+
 `SERVICE`: csphere下`APP`里的服务名称
+
 `HOST_IP`: 指定主机IP
+
 `ADMIN_PASSWORD`: 通过http://haproxy-ip/stats可以访问负载均衡统计
 
-当服务的容器不断发生变化时，haproxy可以实时更新后端并自动reload，保证服务的平滑运行。在实际测试中100万请求过程中不断增加容器后端，没有一个请求失败。
+
+当服务的容器不断发生变化时，haproxy可以实时更新后端并自动reload，保证服务的平滑运行。在实际测试100万请求过程中不断增加容器后端，没有一个请求失败。
 
 ## 授权和法律
 
