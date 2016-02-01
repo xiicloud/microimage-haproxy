@@ -1,4 +1,4 @@
-![haproxy](https://csphere.cn/assets/45169590-0653-4ec5-9a2e-57b4a49fea56)
+![haproxy](https://csphere.cn/assets/a12cc8b7-0f3e-4716-aa6a-dc6901c099e6)
 
 ## 如何使用该镜像
 
