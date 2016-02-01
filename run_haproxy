@@ -2,5 +2,15 @@
 
 # Start the Haproxy service using the generated config
 # echo "[haproxy] starting haproxy service..."
+
+check_haproxy() {
+  while [ true ]; do
+    ps ax|grep -q '/usr/sbin/haprox[y]' || exit 1
+    sleep 10
+  done
+}
+
+[ -f /etc/haproxy/haproxy.cfg ] &&
 /usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg
-exec sleep 1000000000
+
+check_haproxy
