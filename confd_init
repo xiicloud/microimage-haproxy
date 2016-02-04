@@ -14,7 +14,7 @@ fi
 
 sed -i -e "s#SERVICE_NAME#$APP-$SERVICE#g" -e "s#PUBLIC_DOMAIN#$PUBLIC_DOMAIN#g" -e "s#ADMIN_PASSWORD#$ADMIN_PASSWORD#g" $TMPL
 
-for ((i=0; i<120; i++)); do
+for ((i=0; i<10; i++)); do
   confd -onetime -node $HOST_IP:2379 -config-file ${TOML} && break
   echo "[haproxy] waiting for confd to create initial haproxy configuration."
   sleep 1
