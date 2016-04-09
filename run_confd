@@ -1,7 +1,6 @@
 #!/bin/bash
 
-HOST_IP=$(getenv HOST_IP)
-ETCD=$HOST_IP:2379
+ETCD=$CSPHERE_NODE_IP:2379
 CONFD=/bin/confd
 TOML=/etc/confd/conf.d/haproxy.toml
 

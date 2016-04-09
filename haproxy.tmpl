@@ -38,16 +38,17 @@ defaults
     timeout queue             1m
     backlog                10000
 
-{{ $backend1 := "SERVICE_NAME" }}
-{{ $domain1 := "PUBLIC_DOMAIN" }}
 frontend www_http
     bind *:80
     reqadd X-Forwarded-Proto:\ http
     option forwardfor
     option http-server-close
-    acl host_{{ $backend1 }} hdr(host) -i {{ $domain1 }}
-    use_backend cluster_{{ $backend1 }} if host_{{ $backend1 }}
-    default_backend cluster_{{ $backend1 }}
+
+    {{ range $backend, $domain := $lb }}
+    acl host_{{ $backend }} hdr(host) -i {{ $domain }}
+    use_backend cluster_{{ $backend }} if host_{{ $backend }}
+    {{ end }}
+
     capture cookie  SERVERID                     len 32
     capture request header Referer               len 64
     capture request header User-Agent            len 128
@@ -55,18 +56,20 @@ frontend www_http
     capture request header X-Forwarded-For       len 64
     capture request header Accept-Encoding       len 64
 
-{{ $ips := printf "/backends/%s/ips" $backend1 }}
-backend cluster_{{ $backend1 }}
+{{ range $backend, $domain := $lb }}
+{{ $ips := printf "/backends/%s/ips" $backend }}
+backend cluster_{{ $backend }}
     {{ if gt ( len ( ls $ips ) ) 1 }}
     balance roundrobin
     cookie SERVERID insert indirect
     {{ range $id, $ip := ls $ips }}
     {{ $ip := base $ip }}
-    server {{ $backend1 }}-{{ $id  }} {{ $ip }}:80 cookie {{ base $backend1 }}-{{ $id }} check
+    server {{ $backend }}-{{ $id  }} {{ $ip }}:80 cookie {{ base $backend }}-{{ $id }} check
     {{ end }}
     {{ else }}
     {{ range $id, $ip := ls $ips }}
     {{ $ip := base $ip }}
-    server {{ $backend1 }}-{{ $id  }} {{ $ip }}:80
+    server {{ $backend }}-{{ $id  }} {{ $ip }}:80
     {{ end }}
     {{ end }}
+{{ end }}

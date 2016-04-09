@@ -1,5 +1,0 @@
-#!/bin/bash
-
-if [ -f /var/run/s6/container_environment/$1 ]; then
-  cat /var/run/s6/container_environment/$1
-fi

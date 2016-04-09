@@ -2,20 +2,25 @@
 
 TOML=/etc/confd/conf.d/haproxy.toml
 TMPL=/etc/confd/templates/haproxy.tmpl
-APP=$(getenv APP)
-SERVICE=$(getenv SERVICE)
-PUBLIC_DOMAIN=$(getenv PUBLIC_DOMAIN)
-HOST=$(getenv HOST_IP)
-HOST_IP=${HOST:-172.17.0.1}
-ADMIN_PASSWORD=$(getenv ADMIN_PASSWORD)
+
+. /etc/haproxy/haproxy.ini
 if [ -z "$ADMIN_PASSWORD" ]; then
   ADMIN_PASSWORD=admin
 fi
 
-sed -i -e "s#SERVICE_NAME#$APP-$SERVICE#g" -e "s#PUBLIC_DOMAIN#$PUBLIC_DOMAIN#g" -e "s#ADMIN_PASSWORD#$ADMIN_PASSWORD#g" $TMPL
+LBSTRING="{{ lb := make(map[string]string) }}"
+for lb in $LB_INSTANCES; do
+  app=$(echo $lb|cut -d: -f1)
+  svc=$(echo $lb|cut -d: -f2)
+  dom=$(echo $lb|cut -d: -f3)
+  LBSTRING="${LBSTRING}\n{{ lb[\"${app}-${svc}\"] = \"${dom}\" }}"
+done
+
+LBSTRING="$LBSTRING\n{{ passwd := \"${ADMIN_PASSWORD}\""
+sed -i -e "1i $LBSTRING" $TMPL
 
 for ((i=0; i<10; i++)); do
-  confd -onetime -node $HOST_IP:2379 -config-file ${TOML} && break
+  confd -onetime -node $CSPHERE_NODE_IP:2379 -config-file ${TOML} && break
   echo "[haproxy] waiting for confd to create initial haproxy configuration."
   sleep 1
 done
