@@ -2,6 +2,7 @@
 
 TOML=/etc/confd/conf.d/haproxy.toml
 TMPL=/etc/confd/templates/haproxy.tmpl
+TMPL_FIRST=/etc/confd/templates/haproxy.tmpl.orig
 
 . /etc/haproxy/haproxy.ini
 if [ -z "$ADMIN_PASSWORD" ]; then
@@ -16,8 +17,9 @@ for lb in $LB_INSTANCES; do
   LBSTRING="${LBSTRING}\n{{ lb[\"${app}-${svc}\"] = \"${dom}\" }}"
 done
 
-LBSTRING="$LBSTRING\n{{ passwd := \"${ADMIN_PASSWORD}\""
-sed -i -e "1i $LBSTRING" $TMPL
+LBSTRING="$LBSTRING\n{{ passwd := \"${ADMIN_PASSWORD}\" }}"
+
+sed -e "1i $LBSTRING" $TMPL_FIRST > $TMPL
 
 for ((i=0; i<10; i++)); do
   confd -onetime -node $CSPHERE_NODE_IP:2379 -config-file ${TOML} && break

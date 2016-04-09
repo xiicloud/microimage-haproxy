@@ -5,7 +5,7 @@ run wget https://github.com/kelseyhightower/confd/releases/download/v0.10.0/conf
   && apk-install haproxy iptables
 
 add haproxy.toml /etc/confd/conf.d/haproxy.toml
-add haproxy.tmpl /etc/confd/templates/
+add haproxy.tmpl /etc/confd/templates/haproxy.tmpl.orig
 add reload.sh /
 
 add confd_init /etc/cont-init.d/01-confd-onetime
