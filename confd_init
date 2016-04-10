@@ -4,6 +4,8 @@ TOML=/etc/confd/conf.d/haproxy.toml
 TMPL=/etc/confd/templates/haproxy.tmpl                                                                                                                                      
 TMPL_FIRST=/etc/confd/templates/haproxy.tmpl.orig                                                                                                                           
                                                                                                                                                                             
+CSPHERE_NODE_IP=$(cat /var/run/s6/container_environment/CSPHERE_NODE_IP)
+
 config=$(cat /etc/haproxy/haproxy.json)                                                                                                                                     
 configq=$(echo -e $config |sed -e 's/\"/\\\"/g')                                                                                                                            
                                                                                                                                                                             
