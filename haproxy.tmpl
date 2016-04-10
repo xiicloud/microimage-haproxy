@@ -58,14 +58,9 @@ backend cluster_{{ $backend }}
     {{ if gt ( len ( ls $ips ) ) 1 }}
     balance roundrobin
     cookie SERVERID insert indirect
-    {{ range $id, $ip := ls $ips }}
+    {{ range $id, $ip := ls $ips }}{{ $ip := base $ip }}
+    server {{ $backend }}-{{ $id  }} {{ $ip }}:80 cookie {{ base $backend }}-{{ $id }} check{{ end }}
+    {{ else }}{{ range $id, $ip := ls $ips }}
     {{ $ip := base $ip }}
-    server {{ $backend }}-{{ $id  }} {{ $ip }}:80 cookie {{ base $backend }}-{{ $id }} check
-    {{ end }}
-    {{ else }}
-    {{ range $id, $ip := ls $ips }}
-    {{ $ip := base $ip }}
-    server {{ $backend }}-{{ $id  }} {{ $ip }}:80
-    {{ end }}
-    {{ end }}
+    server {{ $backend }}-{{ $id  }} {{ $ip }}:80{{ end }}{{ end }}
 {{ end }}
