@@ -7,16 +7,25 @@
 ### 启动
 ```console
 $ image=index.csphere.cn/microimages/haproxy
-$ docker run --name myhaproxy -d -e PUBLIC_DOMAIN=hello.csphere.cn \
-  -e APP=myapp -e SERVICE=myservice -e HOST_IP=192.168.1.100 \
-  -e ADMIN_PASSWORD=mypass --cap-add=NET_ADMIN $image
+$ docker run --name myhaproxy -d \
+  -v haproxy.json:/etc/haproxy/haproxy.json \
+  --cap-add=NET_ADMIN $image
 ```
 
-- `PUBLIC_DOMAIN`: 应用的外部域名
-- `APP`: csphere下应用名称
-- `SERVICE`: csphere下`APP`里的服务名称
-- `HOST_IP`: 指定主机IP
-- `ADMIN_PASSWORD`: 通过http://haproxy-ip/stats可以访问负载均衡统计
+`haproxy.json` 配置文件，用于配置哪些应用服务的容器加入到haproxy里面：
+```json
+{
+  "admin_password": "admin",
+  "lb_instances": {
+    "app1-service": "domain1",
+    "app2-service": "domain2"
+  }
+}
+```
+
+- `app1/app2` 分别是csphere里的应用名，每次部署一个项目时的唯一名称
+- `service` 是每个应用中哪个服务放到`haproxy`负载均衡后面
+- `admin_password`, 通过 `http://haproxy-ip/stats` 可以访问负载均衡统计
 
 当服务的容器不断发生变化时，haproxy可以实时更新后端并自动reload，保证服务的平滑运行。在实际测试100万请求过程中不断增加容器后端，没有一个请求失败。
 
