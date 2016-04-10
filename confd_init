@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 TOML=/etc/confd/conf.d/haproxy.toml                                                                                                                                         
 TMPL=/etc/confd/templates/haproxy.tmpl                                                                                                                                      
