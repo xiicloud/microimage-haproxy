@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+CSPHERE_NODE_IP=$(cat /var/run/s6/container_environment/CSPHERE_NODE_IP)
 
 ETCD=$CSPHERE_NODE_IP:2379
 CONFD=/bin/confd
