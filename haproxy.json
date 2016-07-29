@@ -1,7 +1,7 @@
 {
   "admin_password": "admin",
   "lb_instances": {
-    "app1-service": "domain1",
-    "app2-service": "domain2"
+    "app1-service": "dom/path1",
+    "app2-service": "dom/path2"
   }
 }
