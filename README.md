@@ -15,18 +15,33 @@ $ docker run --name myhaproxy -d \
 `haproxy.json` 配置文件，用于配置哪些应用服务的容器加入到haproxy里面：
 ```json
 {
-  "admin_password": "admin",
-  "lb_instances": {
-    "app1-service": "dom/path1",
-    "app2-service": "dom2/path2"
-  }
+  "admin_password": "{{.ADMIN_PASSWORD}}",
+  "lb_instances": [
+    {
+      "app":"c",
+      "service":"codesync",
+      "port":21,
+      "domain":"domain1.net",
+      "path":"/path1/a/b"
+    },{
+      "app":"spring",
+      "service":"greenhouse",
+      "port":8080,
+      "domain":"www.domain2.com"
+    }
+  ]
 }
 ```
+字段解释：
 
-- `app1/app2` 分别是csphere里的应用名，每次部署一个项目时的唯一名称
+- `app` csphere里的应用名，每次部署一个项目时的唯一名称
 - `service` 是每个应用中哪个服务放到`haproxy`负载均衡后面
-- `dom/path1` 类似：`www.app.com/app1` 或者 `www.app.com/app2`
+- `port` 该服务监听的端口
+- `domain` 类似：`www.app.com`
+- `path` 类似: `/login`
 - `admin_password`, 通过 `http://haproxy-ip/stats` 可以访问负载均衡统计
+
+注意，同一个domain的不同path，可以映射到不同的应用和服务去，不同domain的相同path，可以映射到相同的应用和服务。这里的`path`稍作变化，可以灵活应用到灰度发布中去，且可以针对不同的项目做出定制化，比如根据`uid`的范围。
 
 当服务的容器不断发生变化时，haproxy可以实时更新后端并自动reload，保证服务的平滑运行。在实际测试100万请求过程中不断增加容器后端，没有一个请求失败。
 

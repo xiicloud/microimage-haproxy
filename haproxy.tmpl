@@ -42,10 +42,14 @@ frontend www_http
     reqadd X-Forwarded-Proto:\ http
     option forwardfor
     option http-server-close
-    {{ range $backend, $url := $lb }} {{$url_a := split $url "/"}}
-    acl host_{{ $backend }} hdr(host) -i {{ $url_a[0] }}
-    acl path_{{ $backend }} path_beg /{{ $url_a[1] }}
-    use_backend cluster_{{ $backend }} if host_{{ $backend }} and path_{{ $backend }}
+    {{ range $lb }}
+      acl host_{{.app}}_{{.service}} hdr(host) -i {{.domain}}
+      {{if .path}}
+      acl path_{{.app}}_{{.service}} path_beg {{.path}}
+      use_backend cluster_{{.app}}-{{.service}} if host_{{.app}}_{{.service}} path_{{.app}}_{{.service}}
+      {{else}}
+      use_backend cluster_{{.app}}-{{.service}} if host_{{.app}}_{{.service}}
+      {{end}}
     {{ end }}
     capture cookie  SERVERID                     len 32
     capture request header Referer               len 64
@@ -53,15 +57,16 @@ frontend www_http
     capture request header Host                  len 64
     capture request header X-Forwarded-For       len 64
     capture request header Accept-Encoding       len 64
-{{ range $backend, $url := $lb }}
-{{ $ips := printf "/backends/%s/ips" $backend }}
-backend cluster_{{ $backend }}
+
+{{ range $lb }}{{$back := printf "%s-%s" .app .service}}{{$port := .port}}{{ $ips := printf "/backends/%s/ips" $back}}
+backend cluster_{{$back}}
     {{ if gt ( len ( ls $ips ) ) 1 }}
     balance roundrobin
     cookie SERVERID insert indirect
     {{ range $id, $ip := ls $ips }}{{ $ip := base $ip }}
-    server {{ $backend }}-{{ $id  }} {{ $ip }}:80 cookie {{ base $backend }}-{{ $id }} check{{ end }}
+    server {{$back}}-{{$id}} {{$ip}}:{{$port}} cookie {{base $back}}-{{$id}} check{{end}}
     {{ else }}{{ range $id, $ip := ls $ips }}
     {{ $ip := base $ip }}
-    server {{ $backend }}-{{ $id  }} {{ $ip }}:80{{ end }}{{ end }}
+    server {{$back}}-{{$id}} {{$ip}}:{{$port}}{{end}}{{end}}
 {{ end }}
+

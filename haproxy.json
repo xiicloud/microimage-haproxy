@@ -1,7 +1,17 @@
 {
-  "admin_password": "admin",
-  "lb_instances": {
-    "app1-service": "dom/path1",
-    "app2-service": "dom/path2"
-  }
+  "admin_password": "{{.ADMIN_PASSWORD}}",
+  "lb_instances": [
+    {
+      "app":"c",
+      "service":"codesync",
+      "port":21,
+      "domain":"domain1.net",
+      "path":"/path1/a/b"
+    },{
+      "app":"spring",
+      "service":"greenhouse",
+      "port":8080,
+      "domain":"www.domain2.com"
+    }
+  ]
 }
