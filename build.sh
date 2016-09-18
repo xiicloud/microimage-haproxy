@@ -5,7 +5,7 @@ set -e
 export CON_NAME=haproxy_t
 export REG_URL=index.csphere.cn
 export IMAGE=microimages/haproxy
-export TAGS="1.6 1.6.2"
+export TAGS="1.6 1.6.6"
 export BASE_IMAGE=microimages/alpine
 
 docker pull $BASE_IMAGE
