@@ -17,14 +17,15 @@ $ docker run --name myhaproxy -d \
 {
   "admin_password": "admin",
   "lb_instances": {
-    "app1-service": "domain1",
-    "app2-service": "domain2"
+    "app1-service": "dom/path1",
+    "app2-service": "dom2/path2"
   }
 }
 ```
 
 - `app1/app2` 分别是csphere里的应用名，每次部署一个项目时的唯一名称
 - `service` 是每个应用中哪个服务放到`haproxy`负载均衡后面
+- `dom/path1` 类似：`www.app.com/app1` 或者 `www.app.com/app2`
 - `admin_password`, 通过 `http://haproxy-ip/stats` 可以访问负载均衡统计
 
 当服务的容器不断发生变化时，haproxy可以实时更新后端并自动reload，保证服务的平滑运行。在实际测试100万请求过程中不断增加容器后端，没有一个请求失败。

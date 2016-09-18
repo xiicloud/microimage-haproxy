@@ -42,9 +42,10 @@ frontend www_http
     reqadd X-Forwarded-Proto:\ http
     option forwardfor
     option http-server-close
-    {{ range $backend, $domain := $lb }}
-    acl host_{{ $backend }} hdr(host) -i {{ $domain }}
-    use_backend cluster_{{ $backend }} if host_{{ $backend }}
+    {{ range $backend, $url := $lb }} {{$url_a := split $url "/"}}
+    acl host_{{ $backend }} hdr(host) -i {{ $url_a[0] }}
+    acl path_{{ $backend }} path_beg /{{ $url_a[1] }}
+    use_backend cluster_{{ $backend }} if host_{{ $backend }} and path_{{ $backend }}
     {{ end }}
     capture cookie  SERVERID                     len 32
     capture request header Referer               len 64
@@ -52,7 +53,7 @@ frontend www_http
     capture request header Host                  len 64
     capture request header X-Forwarded-For       len 64
     capture request header Accept-Encoding       len 64
-{{ range $backend, $domain := $lb }}
+{{ range $backend, $url := $lb }}
 {{ $ips := printf "/backends/%s/ips" $backend }}
 backend cluster_{{ $backend }}
     {{ if gt ( len ( ls $ips ) ) 1 }}
