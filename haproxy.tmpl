@@ -59,7 +59,7 @@ frontend www_http
     capture request header Accept-Encoding       len 64
 
 {{range $lb }}{{$back := printf "%s-%s" .app .service}}
-{{if .port}}{{$port := .port}}{{else}}{{$port := 80}}{{end}}
+{{$port := 80}}{{if .port}}{{$port := .port}}{{end}}
 {{$ips := printf "/backends/%s/ips" $back}}
 backend cluster_{{$back}}
     {{ if gt ( len ( ls $ips ) ) 1 }}
