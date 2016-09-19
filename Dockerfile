@@ -7,6 +7,7 @@ run wget https://github.com/kelseyhightower/confd/releases/download/v0.10.0/conf
 add haproxy.toml /etc/confd/conf.d/haproxy.toml
 add haproxy.tmpl /etc/confd/templates/haproxy.tmpl.orig
 add haproxy.json /etc/haproxy/
+add haproxy.cfg /etc/haproxy/
 add reload.sh /
 
 add confd_init /etc/cont-init.d/01-confd-onetime
