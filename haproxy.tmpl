@@ -1,4 +1,4 @@
-{{ $config := json $configs }}{{ $lb := $config.lb_instances }}{{ $passwd := $config.admin_password }}
+{{ $config := json $configs }}{{ $http_inst := $config.http_instances }}{{ $passwd := $config.admin_password }}{{ $tcp_inst := $conf.tcp_instances }}
 global
     daemon
     pidfile /var/run/haproxy.pid
@@ -37,12 +37,22 @@ defaults
     timeout queue             1m
     backlog                10000
 
+{{range $p,$b := $tcp_inst}}
+listen {{$b.app}}-{{$b.service}}-{{$p}}
+    bind 0.0.0.0:{{$p}}
+    mode tcp
+    maxconn 4096
+    {{$ips := printf "/backends/%s-%s/ips" $b.app $b.service}}
+    {{range $id, $ip := ls $ips}}{{ $ip := base $ip }}
+    server {{$b.app}}-{{$b.service}}-{{$id}} {{$ip}}:{{$b.port}}{{end}}
+{{end}}
+
 frontend www_http
     bind *:80
     reqadd X-Forwarded-Proto:\ http
     option forwardfor
     option http-server-close
-    {{ range $lb }}
+    {{ range $http_inst }}
       acl host_{{.app}}_{{.service}} hdr(host) -i {{.domain}}
       {{if .path}}
       acl path_{{.app}}_{{.service}} path_beg {{.path}}
@@ -58,8 +68,8 @@ frontend www_http
     capture request header X-Forwarded-For       len 64
     capture request header Accept-Encoding       len 64
 
-{{range $lb }}{{$back := printf "%s-%s" .app .service}}
-{{$port := 80}}{{if .port}}{{$port := .port}}{{end}}
+{{range $http_inst }}{{$back := printf "%s-%s" .app .service}}
+{{$port := or .port 80}}
 {{$ips := printf "/backends/%s/ips" $back}}
 backend cluster_{{$back}}
     {{ if gt ( len ( ls $ips ) ) 1 }}

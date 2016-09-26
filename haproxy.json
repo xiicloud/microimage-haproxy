@@ -1,6 +1,6 @@
 {
   "admin_password": "{{.ADMIN_PASSWORD}}",
-  "lb_instances": [
+  "http_instances": [
     {
       "app":"c",
       "service":"codesync",
@@ -13,5 +13,12 @@
       "port":8080,
       "domain":"www.domain2.com"
     }
-  ]
+  ],
+  "tcp_instances": {
+    "3399":{
+      "app":"a",
+      "service":"s",
+      "port":99
+    }
+  }
 }
